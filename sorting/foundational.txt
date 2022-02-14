@@ -1,0 +1,32 @@
+Sorting Applications
+
+INTRODUCTION
+
+Searching through a sorted array is faster than an unsorted array.
+Can find duplicates easily using sorting
+We can find the median or top or smallest item if sorted.
+
+Question Notes:
+- If an array is not sorted, then we can find the range, min, max and mean (average) of all the numbers in a linear scan. It would be hard without extra space to find the median (middle number). It would also take O(n) to find any given number since it's not sorted.
+- If an array is sorted, then we can find the range, min, max and mean as well as the median very easily. With binary search we could find any given number in O(log n)
+
+SELECTION SORT
+
+- scan through the entire array to find the smallest value, then put it in the first place. Then scan the rest of the array and put it in the 2nd place and so on. This is brute force.
+
+Pseudo Code:
+function selectionsort(A): 
+	for i in 0 to n-1:
+		minvalue = A[i]
+		minindex = i
+		for red in i+1 to n-1:
+			if A[red] < minvalue:
+				minvalue = A[red]
+				minindex = red
+		swap A[i], A[minindex]
+	return A
+
+Time: O(n^2)
+Space: O(n)
+
+
