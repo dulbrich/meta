@@ -29,4 +29,44 @@ function selectionsort(A):
 Time: O(n^2)
 Space: O(n)
 
+NOTES ON CODING SELECTION SORT IN PYTHON:
+- Swap is as easy as A[i], A[minindex] = A[minindex], A[i]
+- for i in 0 to n-1 translates to for i in range(len(A))
+- for red in i+1 to n-1 translates to for red in range(i+1, len(A))
+- In general make sure you have all the parts from the pseudo code correct when coding. Translation errors tripped me up and cost time.
 
+BASICS OF ASYMPTOTIC ANALYSIS
+
+- Actual run time of a program will vary based on hardware, language and so on.
+- We measure run time an algorithm based on the number of basic operations in pseudocode, in a way that it can be counted even before writing it as a program.
+- Runtime of selection sort is actually T(n) = an^2 + bn + c where a, b, and c are some system constants. bn + c are considered lower-order terms and as n becomes large, their contribution to run time actually becomes very close to zero comparitively. Therefore we drop those term. We also drop all the system constants. In this way we end up with only n^2 runtime. We write that as Theta(n^2) or O(n^2).
+
+BRUTE FORCE: BUBBLE SORT
+
+Pseudo Code:
+function bubblesort(A):
+	for i in 0 to n-1:
+		for red in n-1 down to i+1:
+			if A[red-1] > A[red]:
+				swap A[red-1], A[red]
+	return A
+
+Time: O(n^2) <-- worse than selection sort because it has more swapping
+Space: O(n)
+
+DECREASE AND CONQUER: INSERTION SORT
+
+Design Strategy #1: Brute Force
+- Try to be 'exhaustive'.
+Design Strategy #2: Decrease and Conquer
+- Decrease the given problem of size n to size n-1 (solve for smallest case and then let iteration solve the rest)
+
+Pseudo Code:
+function insertionsort(A):
+	for i in 0 to n-1:
+		temp = A[i]
+		while red >= 0 and A[red] > temp:
+			A[red+1] = A[red]
+			red --
+		A[red+1] = temp
+	return A
