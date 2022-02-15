@@ -70,3 +70,45 @@ function insertionsort(A):
 			red --
 		A[red+1] = temp
 	return A
+
+DIVIDE & CONQUER: MERGE SORT
+
+- instead of reducing the problem to n-1 we divide the problem space in half (n/2)
+- this is merge sort because we merge two halves together.
+
+Pseudo Code:
+function mergesort(A):
+	helper(A, 0, length(A)-1)
+	return A
+function helper(A, start, end):
+	# leaf worker
+	if start == end:
+		return
+	# internal node worker
+	mid = (start + end)/2
+	helper(A, start, mid)
+	helper(A, mid+1, end)
+	//merge the two sorted halves
+	i = start, j = mid+1
+	aux = en empty array of size end-start+1
+	while i <= mid and j <= end:
+		if A[i] <= A[j]:
+			aux.append(A[i])
+			i++
+		else: // A[i] > A[j]
+			aux.append(A[j])
+			j++
+	// gather phase
+	while i <= mid:
+		aux.append(A[i])
+		i++
+	while j <= end:
+		aux.append(A[j])
+		j++
+	A[start...end] <-- aux
+	return
+
+- Run time is determined by the height of the tree (log n) multiplied by the size of the array (n)
+- Run time: O(n log n)
+- Big Omega notation shows the best case (or lower bound)
+- Merge sort needs extra space (not in place algorithm) 
