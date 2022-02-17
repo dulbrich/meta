@@ -71,6 +71,13 @@ function insertionsort(A):
 		A[red+1] = temp
 	return A
 
+
+- Insertion sort run time depends greatly on the sortedness of the array to begin with. If it is already sorted, then insertion sort is fast. If it's reverse sorted then it is really slow.
+- Best Case: O(n) when already sorted
+- Worst Case: O(n^2) when reverse sorted
+- Average Case: O(n^2) somewhere in between
+- In general, only use insertion sort if you are just putting a number into an array that is already sorted.
+
 DIVIDE & CONQUER: MERGE SORT
 
 - instead of reducing the problem to n-1 we divide the problem space in half (n/2)
@@ -112,3 +119,65 @@ function helper(A, start, end):
 - Run time: O(n log n)
 - Big Omega notation shows the best case (or lower bound)
 - Merge sort needs extra space (not in place algorithm) 
+
+DIVIDE AND CONQUER QUICK SORT
+
+- pick a pivot, put all numbers larger than pivot on right, all smaller on the right.
+- recurse on the two halves on either side of the pivot.
+- BEST CASE: O(n log n) assuming pivot is close to the median
+- WORST CASE: O(n^2) if the pivot is the smallest/largest element
+- AVERAGE CASE: O(n log n)
+
+Lomuto's Partitioning:
+Pseudo Code:
+smaller = start
+for bigger in start + 1 to end:
+	if A[bigger] < A[start]
+		smaller++
+		swap A[smaller]. A[bigger]
+swap A[start], A[smaller]
+
+More Pseudo Code:
+funciton helper(A, start, end):
+	#leaf worker
+	if start == end:
+		return
+	# Internal node worker (Lomuto's)
+	pivotindex = a random int E[start, end]
+	swap A[pivotindex], A[start]
+	smaller = start
+	for bigger in start + 1 to end:
+		if A[bigger] < A[start]
+			smaller++
+			swap A[smaller]. A[bigger]
+		swap A[start], A[smaller]
+	helper(A, start, smaller-1)
+	helper(A, smaller+1, end)
+
+function quicksort(A):
+	helper(A, 0, length(A)-1)
+	return A
+
+Hoare's Partitioning
+Pseudo Code:
+smaller = start + 1
+bigger = end
+while smaller <= bigger:
+	if A[smaller] < A[start]:
+		smaller++
+	else if A[bigger] > A[start]:
+		bigger--
+	else:
+		swap A[smaller], A[bigger]
+		smaller ++, bigger--
+swap A[start], A[bigger]
+
+STABILITY IN SORTING
+
+- selection sort is not stable
+- bubble sort is stable
+- insertion sort is stable
+- merge sort is stable (provided it's implemented carefully)
+- quick sort lomuto's partitioning is not stable
+- quick sort hoare's partitioning is not stable
+- Timesort is stable (Merge Sort)
