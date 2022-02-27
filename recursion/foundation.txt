@@ -1,0 +1,104 @@
+Pseudo Code for general recursive Solution:
+
+if (test for simple case):
+	compute a simple solution without using recursion
+else:
+	#Divide-and-conquer or Decrease-and-conquer
+	break the problem into subproblems of the same form
+	solve each of the subproblems by calling this function recursively
+	reassemble the subproblem solutions into a solution for the whole
+
+# decrease and conquer 
+def binarystrings(n):
+	if n == 1:
+		return [“0”, “1”]
+	else: # n > 1
+		prev = binarystrings(n-1)
+		result = []
+		for s in prev:
+			result.append(s + “0”)
+			result.append(s + “1”)
+		return result
+
+Space Complexity: O(2^n)
+Time Complexity: O(2^n)
+
+# iterative approach
+def binarystrings(n):
+	result = [“0”, “1”]
+	for iter in 2 to n:
+		newresult = []
+		for each string s in result:
+			newresult.append(s+”0”)
+			newresult.append(s + “1”)
+		result = newresult
+
+Space Complexity: O(2^n)
+
+# divide and conquer !!!! DOES NOT WORK !!!!
+Def binarysearch(n):
+	if n == 1:
+		print [“0”, “1”]
+	else:
+		print “0” + binarystrings(n-1)
+		print “1” + binarystrings(n-1)
+
+# divide and conquer
+Def bshelper(slate, n):
+	if n == 0:
+		print slate
+	else:
+		bshelper(slate + “0” , n-1)
+		bshelper(slate + “1” , n-1)
+Def binarystrings(n):
+	bshelper(“”, n)
+
+Time Complexity: O(n^2*n)
+Space Complexity: ??
+
+Corrections:
+	•	slate + "0"; creates a new string. Hence the space complexity of the code will be O(n^2), as during each recursion, a new string will be created.
+	•	To improve the space complexity to O(n), we can predefine an array slate of size n and only use it something like slate[i] = "0";.
+	•	More about this will be discussed in class.
+
+# divide and conquer for decimal numbers from 0…9
+def dshelper(slate, n)
+	if n == 0:
+		print slate
+	else:
+		for I in 0 to 9:
+			dshelper(slate + “str(i), n-1)
+def decimalstrings(n):
+	dshelper(“”, n)
+
+PRINTING PERMUTATIONS WITHOUT REPETITION
+
+def bhelper(slate, array):
+	if len(array) == 0:
+		print slate
+	else:
+		for i in 0 to len[array) - 1:
+			bhelper(slate + array[I], array[:i] + array[I+1:])
+def printpermutations(s):
+	bhelper(“”, s)
+
+Time Complexity: O(n!*n)
+Space Complexity: O(n)
+
+PRINTING COMBINATIONS
+
+Combinations: repetition is not allowed, and order does not matter
+
+def subsethelper(slate, array)
+	if len(array) == 0:
+		print slate
+	else:
+		#exclude
+		subsethelper(slate, array[1:])
+		#include
+		subsethelper(slate + array[0], array[1:])
+def printsubsets(s):
+	subsethelper([], s)
+
+Time Complexity: O(2^n*n)
+Space Complexity: ?
