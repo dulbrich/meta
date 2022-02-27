@@ -1,0 +1,15 @@
+subordinate(input_nums: List[int], idx_subproblem: int, partial_solution: List[int], result: List[List[int]]):
+	if idx_subproblem == len(input_nums):
+		result.push(copy(partial_solution))
+		return
+	
+	for pick = idx_subproblem to len(input_nums) - 1:
+		swap(partial_solution[pick], partial_solution[idx_subproblem])
+		subordinate(input_nums, idx_subproblem + 1, partial_solution, result)
+		swap(partial_solution[pick], partial_solution[idx_subproblem])
+		
+root_manager(input_nums: List[int]):
+	result = []
+	subordinate(input_nums, 0, [], result)
+	return result
+	

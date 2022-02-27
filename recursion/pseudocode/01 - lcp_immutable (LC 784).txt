@@ -1,0 +1,18 @@
+subordinate(input_str: String, idx_subproblem: int, partial_solution: String, result: List[String]):
+	if idx_subproblem == len(input_str):
+		result.push(partial_solution)
+		return
+	
+	if input_str[idx_subproblem].isdigit():
+		subordinate(input_str, idx_subproblem + 1, partial_solution + input_str[idx_subproblem], result)
+	else:
+		subordinate(input_str, idx_subproblem + 1, partial_solution + input_str[idx_subproblem].upper(), result)
+		subordinate(input_str, idx_subproblem + 1, partial_solution + input_str[idx_subproblem].lower(), result)
+
+root_manager(input_str: String):
+	result = []
+	
+	subordinate(input_str, 0, "", result)
+	
+	return result
+	

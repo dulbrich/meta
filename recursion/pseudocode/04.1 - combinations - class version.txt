@@ -1,0 +1,22 @@
+subordinate(nums: List[int], k: int, idx_subproblem: int, partial_solution: List[int], results: List[List[int]]):
+	if len(partial_solution) == k: # Constraint Satisfaction (Base case # 01)
+		results.push(copy(partial_solution))
+		return # Pruning / Backtrack
+		
+	if idx_subproblem == len(nums): # Base case 02: end of input processing
+		return
+	
+	# exclude
+	subordinate(nums, k, idx_subproblem + 1, partial_solution, results)
+
+	# include
+	partial_solution.add(nums[idx_subproblem])
+	subordinate(nums, k, idx_subproblem + 1, partial_solution, results)
+	partial_solution.pop()
+	
+	
+root_manager(nums: List[int], k: int):
+	results = [] 
+	subordinate(nums, k, 0, [], results)
+	return results
+	

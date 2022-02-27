@@ -1,0 +1,21 @@
+subordinate(n: int, k: int, idx_subproblem: int, partial_solution: List[int], results: List[List[int]]):
+	if len(partial_solution) == k: # Base case 01: constraint satisfaction
+		results.push(copy(partial_solution))
+		return # pruning / backtrack
+		
+	if idx_subproblem == n + 1: # Base case 02: end of input processing
+		return
+	
+	# exclude
+	subordinate(n, k, idx_subproblem + 1, partial_solution, results)
+
+	# include
+	partial_solution.add(idx_subproblem)
+	subordinate(n, k, idx_subproblem + 1, partial_solution, results)
+	partial_solution.pop()
+	
+root_manager(n: int, k: int):
+	results = []
+	subordinate(n, k, 1, [], results)
+	return results
+	
