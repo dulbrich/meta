@@ -1,0 +1,138 @@
+SS1 1 ONLINE PROCESSING SYSTEMS AND CLIENT-SERVER-MODEL
+
+Atomic Units of a computer
+- CPU
+- Memory
+  * Ram
+  * Disk
+- Communication
+
+Atomic Units of an Online Service
+- API
+- Micro Services
+
+How do we build a system (comprised of computers and services) that can scale?
+
+
+
+SS1 2 URL SHORTENER FUNCTIONAL REQUIREMENTS
+
+Example system to design: URL shortener service
+
+Functional Requirements
+- User can supply a long URL and get a short URL
+- User can click on a short URL and be redirected
+- If the same long URL is entered then a diff short URL is returned each time.
+
+Optional Functional Requirements
+- Customizable URL
+- TTL (time to live = 30 days? Recycling short URLs)
+- Short URL creator can get analytics on total clicks on short link
+
+Why does anyone care?
+- links are meaningless
+- SMS/Twitter cannot take HUGE URLs
+- URLs can get really long
+- Short links can be used for analytics
+(which youtuber referral drove the most traffic to your product?)
+
+Step 1. Gather functional requirements
+- Show that you can communicate and unpack a short, open-ended problem *****
+
+NOTE: Gigabit per second throughput Power 9 IBM?
+
+
+
+SS1 3 DEPTH VS BREADTH ANALYSIS
+
+What is expected of us?
+- With this example, we would be expected to code up the encode and decode URL function
+
+Rule of thumb: if the API's and the data models for two functional reqwuirements do not look the same, put them in different buckets.
+
+Steps to an interview *****
+1. Gather functional requirements (Alex says also gather non-functional requirements at this stage)
+2. Cluster them into a collection of microservices
+3. Draw the architechture diagram connecting them
+4. Dive into each microservice (assuming scale is not in the picture)
+- If there are too many microservices, megotiate with the interviewer which ones to focus on
+- Budget your time per microservice, since you have only a constant amount of time
+- If there is only one microservice, there might be a coding part to the interview
+
+
+
+SS1 9 WEB SERVER
+
+App server will have a shared DBMS which allows for multiple connections
+App server is stateless and multithreaded
+App server can be scaled out and put behind a load balancer
+Threads on a web server act like tellers at a bank, requests might come in a queue (like a line at a bank)
+- responses might also come out in a queue becaue the network needs time to send out those responses
+
+
+
+SS1 HORIZONTAL AND VERTICAL SCALING
+
+Step 4 from Steps to an interview *****
+4. Dive into each microservice (assuming scale is not in the picture)
+- If there are too many microservices, megotiate with the interviewer which ones to focus on
+- Budget your time per microservice, since you have only a constant amount of time
+- If there is only one microservice, there might be a coding part to the interview
++ Gather non-functional/capacity requirements and check wether and how to scale each tier     *****
++ Propose distributed system for each tier                                                    *****
+
+Reasons for distributed sistem (scaling):
+1. Data is too huge.
+2. Too many transactions per second (throughput)
+3. Response time is too high (parallelize)
+4. Availability/Reliability
+5. Geolocation: minimize network latency (multiple server locations)
+6. Hotspots (example: celebrity)
+
+Scaling up: make the machine faster and have more disk space (don't argue for this at a large company)
+Scaling out: more machines
+
+
+SS1 12 URL SHORTENER SCALING FOR DATA SIZE
+
+Non-functional/Capacity requirements:
+- How many records are created every year? (size of data)
+- How many transactions per year
+
+bit.ly example:
+- 2-3 billion short links created every year ~ 73 qps (write operations)
+- 20 billion clicks per month ~ 7700 qps ()
+
+Reasons for distributed sistem (scaling) FROM ABOVE WITH EXTRA DETAILS:
+1. Data is too huge.
+2. Too many transactions per second (throughput)
+3. Response time is too high (parallelize)
+4. Availability/Reliability (single point of failure)                 yes: always worry about this
+   + rule of thumb: 3x replication
+5. Geolocation: minimize network latency (multiple server locations)  x: may not have to worry about this in an interview
+6. Hotspots (example: celebrity)                                      x: may not have to worry about this in an interview
+
+How to determine data size:
+- how many records to store
+  + could be calculated by number of queries per second over a number of years
+  + rule of thumb: plan for 3 years of storage
+- how big is each record
+- answer: record size * number of records
+
+bit.ly example:
+1. Figure out how many records we will store
+  + Maths:
+  3 yrs = 365 x 3 ~= 1000 days
+  seconds per day:
+  = 24x60x60 ~= 100,000
+  seconds in 3 yrs:
+  1,000 x 100,000 = 10^8
+  number of records per second ~= 100
+  10^8 x 10^2 = 10^10  ~= 10 billion
+2. What is the size of each k-v pair? ~ 2KB
+  + Maths:
+  short url ~= 6 bytes
+  long url ~= 2kb
+  answer ~= 2kb
+3. record size * number of records:
+  + Maths

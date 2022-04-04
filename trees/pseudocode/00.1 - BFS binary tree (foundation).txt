@@ -1,0 +1,18 @@
+get_values_in_bfs_order(root) -> List[int]:
+	if root is null:
+		return default value # ask
+		
+	nodes_to_visit_queue = new Queue(root)
+	values_in_bfs_order = []
+	
+	while nodes_to_visit_queue is not empty:
+		cur_visited_node = nodes_to_visit_queue.pop()
+		values_in_bfs_order.append(cur_visited_node.val)
+		
+		if cur_visited_node.left is not null:
+			nodes_to_visit_queue.insert(cur_visited_node.left)
+		if cur_visited_node.right is not null:
+			nodes_to_visit_queue.insert(cur_visited_node.right)
+
+	return values_in_bfs_order
+

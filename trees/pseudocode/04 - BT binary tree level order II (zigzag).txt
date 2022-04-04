@@ -1,0 +1,29 @@
+get_zigzag_bfs(root):
+	if root is null:
+		return []
+		
+	nodes_to_visit_queue = new Queue(root)
+	values_per_level = []
+	left_to_right = True ##
+	
+	while nodes_to_visit_queue is not empty:
+		cur_level_num_nodes = length(nodes_to_visit_queue)
+		cur_level_nodes_values = []
+		
+		repeat cur_level_num_nodes times:
+			cur_visited_node = nodes_to_visit_queue.pop()
+			cur_level_nodes_values.insert(cur_visited_node.val)
+				
+			if cur_visited_node.left is not null:
+				nodes_to_visit_queue.insert(cur_visited_node.left)
+			if cur_visited_node.right is not null:
+				nodes_to_visit_queue.insert(cur_visited_node.right)
+		
+		if not left_to_right: ##
+			cur_level_nodes_values.reverse()
+		
+		left_to_right = not left_to_right ##
+		
+		values_per_level.insert(cur_level_nodes_values)
+			
+	return values_per_level

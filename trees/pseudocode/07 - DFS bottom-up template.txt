@@ -1,0 +1,21 @@
+dfs(cur_node):
+	# Base case: leaf node
+	if cur_node.left is null and cur_node.right is null:
+		# Leaf level processing
+		
+	# Recursive case: internal node
+	if cur_node.left is not null:
+		result_left = dfs(cur_node.left)
+	if cur_node.right is not null:
+		result_right = dfs(cur_node.right)
+		
+	# process results
+	# return information to parent
+
+main(root)
+	if root is null:
+		return default value # ask
+		
+	dfs(root)
+	
+	

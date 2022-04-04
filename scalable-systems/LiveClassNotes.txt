@@ -1,0 +1,19 @@
+1. Gather functional requirements (Alex says also gather non-functional requirements at this stage)
+2. Cluster them into a collection of microservices
+3. Draw the architechture diagram connecting them
+4. Dive into each microservice
+5. Identify the need for scale
+
+Step 1: Gather requirements of the system
+
+1. Gather functional requirements
+	a. Detailed problem statement
+	b. How does the user view the system in plain english
+	c. Show that you can communicate and unpack and open-ended problem
+	d. ASK CLARIFYING QUESTIONS
+
+2. Design Constrsints / Scalability requirements
+	a. number of users, transactions per second
+	b. be prepared to estimate these amounts
+
+

@@ -1,0 +1,24 @@
+get_bfs_right_side(root):
+	if root is null:
+		return default value # ask
+		
+	nodes_to_visit_queue = new Queue(root)
+	values_per_level = []
+	
+	while nodes_to_visit_queue is not empty:
+		cur_level_num_nodes = length(nodes_to_visit_queue)
+		cur_level_nodes_values = []
+		
+		repeat cur_level_num_nodes times:
+			cur_visited_node = nodes_to_visit_queue.pop(0)
+			cur_level_nodes_values.insert(cur_visited_node.val)
+				
+			if cur_visited_node.left is not null:
+				nodes_to_visit_queue.insert(cur_visited_node.left)
+			if cur_visited_node.right is not null:
+				nodes_to_visit_queue.insert(cur_visited_node.right)
+		
+		values_per_level.insert(last_element(cur_level_nodes_values)) #
+			
+	return values_per_level
+

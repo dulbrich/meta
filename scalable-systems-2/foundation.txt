@@ -1,0 +1,352 @@
+SS2 1 SEARCH ENGINE FUNCTIONAL REQUIREMENTS
+
+We will build a search engine for all 37 plays by Shakespeare
+
+Functional Requirements:
+User can query the search system.
+Search system returns a list of documnets.
+Search can use boolean operators like AND, OR and NOT (boolean retrieval system)
+No Free text queries
+No ranking (in decreasing order of relivence)
+
+Collection of Microservices:
+query --> Search System Server
+list of docs <-- Search System Server
+
+There is only one microservice, no need to diagram.
+Just jump into the deep dive.
+
+Pause the video and think about how we can do a boolean retrieval system:
+
+1. Place all words from all plays into a hash table
+	word (key) -> [list of plays] (value)
+2. Search
+	ex. Caesar
+	- caesarPlays = search[Caesar]
+	return caesarPlays
+	ex. Brutus AND Caesar
+	- brutusPlays = search[Brutus]
+	- caesarPlays = search[Caesar]
+	return union of brutusPlays & caesarPlays (where play titles match)
+	ex. Caesar OR Cleopatra
+	- ceasarPlays = search[Caesar]
+	- cleopatraPlays = search[Cleopatra]
+	return set(seasarPlays + cleopatraPlays)
+	ex. NOT Calpurnia
+	- playsSet = set()
+	- for each key in search:
+		if key != Calpurnia:
+			set.add(search[key])
+	return playsSet
+
+	Non functional requirement:
+	Keep every play in memory. Is this doable?
+
+Grep would be very slow O(corpus size)
+
+
+
+SS2 2 TERM-DOCUMENT INCIDENCE MATRIX
+
+Transform and Conquer: trasform the documents into a data structure
+
+Omkar considers a directed graph/adjacency matrix.
+Adjacency Matrix: terms along the y axis(about 500,000 terms/rows), documents along the x axis (about 37 documents/columns)
+If we do this, then 1000/500000 * 100 = 0.2% which means that 99.8% of the matrix is empty (very sparse)
+This is not very efficiant - I think he's working up to my idea.
+
+
+
+SS2 3 INVERTED INDEX
+
+He improves on my idea by just giving each document by a unique document id
+This is called a postings list
+
+He agrres with my idea: use a dictionary
+
+Our Shakespeare example with be static size.
+
+Terms would also be called an index or a search index (like the index in the back of a book)
+
+Strategy to fit in memory: Keep all indexes in memory, keep all the postings lists on disk.
+
+
+
+SS2 4 IN-MEMORY INDEX CONSTRUCTION AND SERVING SERCH RESULTS
+
+AND is the intersection or two (sorted) arrays
+Easy to find: just use a two pointer pass to find where they both have the same id's
+Must be two sorted arrays if we want to do this.
+Time complexity O(x + y)
+TODO: write a two pointer pass in python
+
+Processing documents:
+Each word from each document in the corpus is seperated by white space and then cleaned from having any punctuation
+Then each word is put into normal form (all lower case letters)
+We also depluralize each word (ex: countrymen becomes countryman)
+Tokenizer -> Linguistic modules -> Indexer
+The query also has to be tokenized and liquisticized then we consult the index
+
+To do NOT, all you have to do is iterate through the sorted list of the NOT item, and return all the numbers that do not appear in that list.
+
+TODO: write the python script to NOT a list
+Time complexity for NOT: O(|D| - y) where |D| is number of docs in corpus
+
+
+
+SS2 5 INVERTED CONSTRUCTION ON DISK
+
+Suppose the inverted index is disk-based. How do we construct it?
+
+My idea: construct key value file (bucket file) where certain keys reside and can be looked up with a hash function. The file could then be read into a dictionary in memory and used to look up the file where the value resides.
+
+Omkar appears to be creating a list of pairs, sorted first by term, then by id.
+- In this way when you come to the same term that is repeated you can build a postings list based on what doc id's there are in the pairs.
+
+
+
+SS2 6 EXTERNAL SORT-MERGE EXAMPLE
+
+When we retrieve memory from disk it's usually in blocks (or pages).
+Block sizes range from 4-6 kb.
+
+Suppose RAM has space for two blocks. 
+1. Read in two blocks into ram and run quick sort on those two blocks.
+2. Write the sorted blocks in ram back to a file on disk.
+3. Read in next two blocks into ram and run quick sort on those two blocks.
+4. Write the sorted blocks in ram back to a different file on disk.
+Now assume RAM has soace for three blocks. (Two input buffers, one output buffer)
+1. Bring one block from the first file into an input RAM buffer. Do the same with the first block of the second file.
+2. Merge the two input RAM buffers into the output RAM buffer until the output buffer is full using two pointers.
+3. When the output buffer is full, flush the buffer by writing to an output file on disk.
+4. Any time an input block is fully used, then bring in the next block from corresponding file on disk.
+5. Repeat until all blocks are moved to output file.
+- Don't forget to flush out the remaining data from buffers.
+
+
+
+SS2 7 K-WAY EXTERNAL SORT-MERGE
+
+This generalizes the example from above.
+
+Assume N blocks/pages. Assume B buffers in RAM.
+1. Bring b blocks into buffer
+2. Merge b blocks into a file of size b
+ex. N = 108, B = 5 ==> 22 output files of 5 blocks (last file would be 3 blocks big)
+After that we end up with ceiling[N/B] runs
+Assume we have 4 input buffers and 1 output buffer
+1. use buffers to merge 5 files of size 20 blocks and one of 8 blocks
+Assume we have 4 input buffers and 1 output buffer
+1 Repeat merge -> now we have a file of 80 blocks and another of 28 blocks
+Assume we have 2 input buffers and 1 output buffer
+1. repeat merge -> now we have 1 file of 108 blocks
+
+In general we would have the following after every run
+ceiling(N/B) -> ceiling(ceiling(N/B)/B-1) -> ceiling(ceiling(N/b)/(B-1)^2) -> ceiling(ceiling(N/b)/(B-1)^3) and so on...
+
+ The above simplifies to:
+ i = logvB-1(N/B)
+
+ disk IO ops = ops in sort + sort + ops in merge [or i*(N+N) or 2Ni]
+
+ OR
+
+ disk Io ops = 2N(i+1)
+
+ For our example:
+ i = log4(108/5) = 3
+ disk Io ops = 2 x 108 1 (3 + 1) = 864
+
+
+
+ SS2 8 DOUBLE BUFFERING
+
+ Basically for every block you are putting into the buffer on ram you have a second buffer.
+ The point is that you don't have to wait for the buffer to read from disk before proceeding.
+ Also, you can do the same with the output buffer.
+
+ However, this can increase i in 2N(i+1) but also enable CPU computation and disk I/O in parallel
+
+ 
+
+SS2 9 MERGE K SORTED LISTS
+
+Instead of finding the min value of k buffers n times O(nk^2) we can use a min heap
+Min heap has an insert and extract of log(k)
+This reduces the complexity to O(logk) * (nk) where n is the number of elements in the buffer of k buffers
+
+Seudo Code
+
+function mergeklists(lists):
+	minheap = an empty priority queue
+	for i in range(lists):
+		if lists[i] is not null:
+			minheap.insert((lists[i].val, lists[i]))
+	//init output list
+	head = new ListNode("Sentinel")
+	tail = head
+	// repeatedly extract the min element from 
+	// the heap & append it to the output list
+	while minheap is not empty:
+		val, p = minheap.extractmin() // value and pointer
+		//apped p to the end of the output list
+		tail.next = p
+		tail = p
+		p = p.next
+		tail.next = null
+		if p is not null:
+			minheap.insert((p.val, p))
+	head = head.next
+	return head
+
+	// O(nk log k)
+	// aux space O(k)
+
+
+
+SS2 10 BATCH PROCESSING OR ETL
+
+ETL - extract trasform load (jobs)
+
+
+
+SS2 11 SSTABLE
+
+The video goes over a small optimization of our search
+
+To this point we have a dictionary in ram that points to postings files on disk.
+The file is the term and then doc ids concatenated together.
++ Don't have all terms in the dictionary in ram. We then take the nearest match from
+	the dictionary. Then take a block from disk and find the exact match.
++ This allows for range queries like Query = brut*
+The idea is that we can scan the values in lexigraphical order
+
+This is called Sorted String Table SSTable
+
+
+
+SS2 12 DISTRIBUTED FILE SYSTEM 
+
+When your corpus gets huge, you have to shard the dictionary as well as the values
+
+Given: A filename "foo", where does the file reside?
+- On which machine?
+- Which location on teh disk of that machine?
+
+Master machine would have the metadata of "foo" readily available
+telling us on which machine and where on disk.
+
+Google has a Google File System (GFS) where the master machine holds
+the corpus which is nothing more than a set of pointers of chungs split
+amoungst many machines.
+
+The GFS favored AP over CP (Availability over consistency)
+
+Throughput for batch jobs = the time it takes for the input to be read and 
+transformed into the output
+
+
+
+SS2 13 MAP REDUCE
+
+Chunk servers point to Mapper servers which point to reducers.
+
+Theres a hash function that takes the term from the mapper machine
+and hashes where that document will go on the reducer machines
+A scheduler will tell the mappers what chunks of data to work on
+and ultimatly tell the reducer machines where they need to go to
+get the data they need to store.
+The mappers reside on the chunk servers (the scheduler tells the chunch machines they will be mappers)
+The reducers could then sort the data for linear scanning (build the postings list)
+Mappers can eliminate duplicates by presorting the data. Reduces the load on the network for moving data around.
+The sorting ultimately gets done partly by the mappers, and partly by the reducers. The reducers have to merge the
+partitions
+
+
+
+SS2 14 MAP REDUCE SCHEDULING
+
+How does map-reduce speed up the batch processing pipeline?
+
+Say we have 50 billion docs in our corpus with 300 TB of data. At 50MB/sec read speed it would take us
+about 70 days to read the entire corpus. How do we speed things up? Parallelization!
+
+Say you parallelize by 1000. You cut down 70 days to less than 2 hours.
+
+Some principles: You want to store your backup data in such a way that they are far away from eachother.
+This is because the chances of a switch or a single machine going down is quite high when you have thousands
+of machines. This way if a whole rack or even a row is inaccessable due to failure, you still have access
+to the data you need.
+
+Move computation close to data.
+
+The scheduler needs to be able to handle partial failures in the system.
+Each chunk is 64MB. This is so that if a mapper machine fails, the scheduler doesn't have to place all chunks
+onto a single different mapper to finish. Instead, a scheduler can send those chunks to several machines to
+finish quickly. You would want to do this because the reducers cannot finish their job until all mappers finish.
+If you have 1 mapper fail, and then you had a second mapper do the work of the failed mapper after the fact, then
+you could potentially double the amount of time the mappers take to finish the batch job - whilst a lot of machines
+are just sitting around doing nothing.
+
+When a reducer fails, then the scheduler simply assigns 1 new machine to take over the failed reducers work. It simply
+has to go retrieve all the chunks from all the mapper machines. Work can then resume. This means that all the mappers
+must keep their data around until the reducers finish their work.
+
+The probability of a single machine going down is quite low, so you only need 1 machine to do the work of a scheduler.
+Even so, you might want to have a backup machine since that would cause havoc in a data center if it went down.
+
+
+
+SS2 15 WORDCOUNT
+
+The above was how we would create a reverse index on our corpus. How do we do a simple word count?
+
+All I have to worry about as a programmer is to write the mapper and reducer function. The rest will
+be taken care of by the framework to get the scheduling done by the distributed compute.
+
+Pseudo Code
+
+function map(chunk):
+	for each word w in chunk:
+		output (w, 1) // to disk
+
+function reduce(key, list of values):
+	// how to handle the list of vlaues?
+	output key, sum(list of values)
+
+
+
+SS2 16 DISTRIBUTED SORTING
+
+Keys move from Mappers to Reducers in a deterministic but unpredictable way.
+In the example we see the keys are sorted in each reducer, but they are not sorted accross reducers.
+This happens through the shuffle process.
+
+If we want to move keys from mappers to reducers in a predictable way we need to change the hash function.
+We need to know the min and max, then do some kind of analysis as to which ranges map to which buckets.
+Basically we divide the key in this example by the number of buckets and take the ceiling. 
+
+ex. ceiling(1/3) = 1, ceiling(2/3) = 1, ceiling(3/3) = 1, ceiling(4/3) = 2 and so on...
+
+
+
+SS2 17 TERM-PARTITIONED INDEX
+
+We decided that the number of shards is the same as the number as reducers...
+
+The question from this video is how do we parallelize the work of going to disk?
+This is the most expensive part, and adds the most significant amount of time to the
+overall service time.
+
+Term-Partitioned Index is sharding where the sharding is done horizontally based on term.
+(This is where the large service time comes from)
+
+
+
+SS2 18 DOCUMENT-PARTITIONED INDEX WITH SCATTER-GATHER FOR PARALLELISTM
+
+Documents themselves can be partitioned virtically.
+This means different partitions can reside on different machines - thus we can parallelize the access to disk.
+
+The load balanceer that sits in front of the database scatters the query to all the shards, then all the answers
+are gathered together - hense the scatter/gather name.

@@ -1,0 +1,19 @@
+You can not have an Eurlerian path (travel every edge exactly once) on any given graph if all of the verticies do not have exactly even edges leading to them.
+
+An Eulerian path can either start and end in the same verticies (have a cycle) or start and end at two different verticies.
+
+If a Eulerian path starts and ends in two different verticies, those two different verticies can have odd number of paths.
+
+"If there are more than two areas to which an odd number of bridges lead, then such a journey is impossible"
+"If, however, the number of bridges is odd for exactly two areas, then the journey is possible if it starts from either of these areas."
+"If, finally, there are no areas to which an odd number of bridges lead, then the required jouney can be accomplished from any starting point."
+"With these rules, the given problem can be solved."
+
+Exploring every node in a tree of n vertices: nC2 = n(n-1)/2 = O(n^2)
+
+Adjacency list: a list of pointers pointing to a list of adjacent nodes. Find all neighbors a node? O(1), Find all neighbors of all nodes? O(n)
+
+Adjacency matrix: an n by n matrix. Find all neighbors for a node? O(n), find all neighbors for all nodes? O(n^2)
+- Good for when the number of edges is close to the number of verticies^2.
+
+Adjacency map: key = node, value: list of neighbors and their weights

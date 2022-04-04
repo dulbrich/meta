@@ -1,0 +1,9 @@
+dfs(cur_node):
+	if cur_node is null:
+		return
+	
+	# print(cur_node.val) # preorder
+	for child in cur_node.children:
+		dfs(child)
+		# print(cur_node.val) # postorder
+	

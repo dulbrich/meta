@@ -1,0 +1,30 @@
+max_diameter = 0
+
+get_height(cur_node) -> int:
+	# Base case: leaf node
+	if cur_node.left is null and cur_node.right is null:
+		return 0
+
+	left_height = 0
+	right_height = 0
+		
+	# Recursive case: internal node
+	if cur_node.left is not null:
+		left_height = 1 + get_height(cur_node.left)
+	if cur_node.right is not null:
+		right_height = 1 + get_height(cur_node.right)
+		
+	my_diameter = left_height + right_height
+	max_diameter = max(max_diameter, my_diameter)
+	
+	my_height = max(left_height, right_height)
+	return my_height
+
+get_max_diameter(root)
+	if root is null:
+		return 0
+		
+	get_height(root)
+	
+	return max_diameter
+	

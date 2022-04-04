@@ -1,0 +1,21 @@
+found_sum = False
+
+top_down_dfs(cur_node, cur_sum, target_sum):
+	if cur_node.left is null and cur_node.right is null:
+		if cur_sum + cur_node.val == target_sum:
+			found_sum = True
+	
+	if cur_node.left is not null and not found_sum:
+		top_down_dfs(cur_node.left, cur_sum + cur_node.val, target_sum)
+	
+	if cur_node.right is not null and not found_sum:
+		top_down_dfs(cur_node.right, cur_sum + cur_node.val, target_sum)
+
+has_path_sum(root, target_sum) -> bool:
+	if not root:
+		return False
+		
+	top_down_dfs(root, 0, target_sum)
+	
+	return found_sum
+	

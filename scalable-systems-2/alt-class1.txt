@@ -1,0 +1,66 @@
+THE FOLLOWING ARE NOTES FROM THE ALTERNATIVE CLASS - SCALABLE SYSTEMS 2 WITH MURALI
+
+
+
+NEWSFEED (Like Facebook)
+
+Phase 1
+
+1. Collection of user posts
+2. Post:
+	- Content
+		- Text
+		- Image
+		- Link
+		- Video
+	- Likes, Comments, Shares
+	- Author
+
+Phase 2
+
+Data model + frontend
+
+Behind the scenes: making call to api.
+Api returns a list of posts with models inside of it.
+
+Contents:
+thumbnail: url
+likes: list of users
+comments: list of user comments with their info and thumnail, etc
+
+Api parameters: depending on device type, send me 5 or 10 posts at a time...
+
+Should we fetch the comments with the post or after? Tradeoffs?
+
+If you send it with, then you might have slower load overall, but you get very responsive UI
+
+If you send it without, then you get faster load overall, but when the user gets the comments
+the UI is a little slower.
+
+If you send it with, then you have to do a join on the database. Greater load on the server.
+If you send it without, then you still hit the same amount of data. Greater load on the database.
+
+You need to insulate your DB server with a very strong cache so you don't overload your DB server.
+
+Pseudo Code
+
+Post_Recd(post_id):
+	author = getAuth(post_id)
+	followers = getFollowers(author)
+	for follower in followers:
+		push.notify(follower)
+
+What about celebrities? We may be spending $10 million to notify those 10 million users subscribed to
+the beebs. How can we save some money?
+
+Answer: Hybrid.
+
+Only notify those who are logged in at the time. Send an email to the rest.
+
+
+
+TIME SERIES DATABASE
+
+100's of hosts emitting ave, max, min every minute
+You need to persist this data for 1 year.
+

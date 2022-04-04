@@ -181,3 +181,13 @@ STABILITY IN SORTING
 - quick sort lomuto's partitioning is not stable
 - quick sort hoare's partitioning is not stable
 - Timesort is stable (Merge Sort)
+- Heapsort is not stable
+
+BINARY HEAP OPERATIONS
+
+- Insert O(log n)
+- Get Max O(log n)
+- Create entire structure from list O(n log n)
+- Pull out every element in sorted order O(n log n)
+- Heap sort O(n log n)
+- Heap sort is not stable

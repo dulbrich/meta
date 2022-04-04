@@ -1,0 +1,27 @@
+target_paths = []
+
+top_down_dfs(cur_node: TreeNode, cur_sum: int, cur_path: List[int], target_sum: int):
+	cur_path.append(cur_node.val)
+	
+	if cur_node.left is null and cur_node.right is null:
+		if cur_sum + cur_node.val == target_sum:              
+			target_paths.append(copy(cur_path))
+	
+	if cur_node.left is not null:
+		top_down_dfs(cur_node.left, cur_sum + cur_node.val, cur_path, target_sum)
+	
+	if cur_node.right is not null:
+		top_down_dfs(cur_node.right, cur_sum + cur_node.val, cur_path, target_sum)
+		
+	cur_path.pop()
+
+get_paths(root: TreeNode, target_sum: int) -> List[List[int]]:     
+	target_paths = []
+	
+	if not root:
+		return target_paths
+	
+	top_down_dfs(root, 0, [], target_sum)
+	
+	return target_paths
+

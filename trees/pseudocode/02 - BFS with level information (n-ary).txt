@@ -1,0 +1,22 @@
+get_bfs_values_per_level(root):
+	if root is null:
+		return default value # ask
+		
+	nodes_to_visit_queue = new Queue(root)
+	values_per_level = []
+	
+	while nodes_to_visit_queue is not empty:
+		cur_level_num_nodes = length(nodes_to_visit_queue)
+		cur_level_nodes_values = []
+		
+		repeat cur_level_num_nodes times:
+			cur_visited_node = nodes_to_visit_queue.pop()
+			cur_level_nodes_values.insert(cur_visited_node.val)
+				
+			for child in cur_visited_node.children: ##
+				nodes_to_visit_queue.insert(child) 	##
+		
+		values_per_level.insert(cur_level_nodes_values)
+			
+	return values_per_level
+

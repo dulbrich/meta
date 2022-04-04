@@ -1,0 +1,10 @@
+dfs(cur_node):
+	if cur_node is null:
+		return
+	
+	# print(cur_node.val) # preorder
+	dfs(cur_node.left)
+	# print(cur_node.val) # inorder
+	dfs(cur_node.right)
+	# print(cur_node.val) # postorder
+	
