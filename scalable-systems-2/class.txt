@@ -1,0 +1,162 @@
+REZA Software Engineer @ Google
+
+Expectations of a system design
+
+Correctness
+Performance
+- Reponse time
+- Availability (-> what about consistency?)
+- Troughput
+
+Response Time: The time it takes for a user to get a response back on a request to the server.
+More specifically, it's network latency + the server processing time.
+
+Note to self: response time may link to add revenue. Faster response time = more revenue.
+
+Most of the time we don't have much control on the network delay (other than geolocation), more
+emphasis is placed on service time (server processing time).
+
+For every 100 miliseconds added to service time, there is a significant drop in add revenue.
+
+Availability => what is the fraction of responses which come back 100% correct. Availability is also
+uptime on a system.
+
+Throughput => number of requests per second
+
+These paramaters are interdependent (one will effect the other)
+
+KEY SUBJECTS TO KNOW ABOUT BEYOND DATA STRUCTURES AND ALGORITHMS
+
+1. Database systems
+2. Networks
+3. Operating Systems
+4. Distributed Systems
+
+
+
+DESIGN A SEARCH ENGINE
+
+1. Gather functional requirements
+	- Questions to ask
+		* What is our corpus? (what are we searching against)
+		* What is the nature of the input search?
+		* What is the exected output fo the search?
+	- Ask the questions that will lead to an API
+		* User query => list <strings>
+		* Response => list <documents>
+
+2. Bucketize the functional requirements into microservices.
+	- Some of the microservices of our search engine
+		* Offline Batch processing of corpus (build reverse index)
+		* Search engine request/response
+
+3. Draw the logical architecture (less important for depth oriented problem given there's not much to draw)
+
+4. Deep dive into each microservice
+
+4a. Pretend that you have a single server (biggest probability to flunk the interview here - BE CAREFUL) 
+	- Don't be worried at first about building for scale. Build for the single user then go from there.
+	- Finding that you build something that isn't scaling is a sign of success, not failure.
+	- For our offline batch processing we will create an inverted index which is an inverted adjecency list
+		+ document id's are stored in a list or linked list.
+		+ doc ids are sorted in ascending order
+		+ we can use a two pointer approach for AND
+		+ intersection of two lists (two pointer approach)
+		+ remember the flow: tokenizer -> linguistic modules -> indexer
+
+4b. Gather Non-functional / Capacity requirements and check whether & how to scale each tier.
+	- Corpus Size: hundreds of docs
+	- Throughput: ~ 70,000 qps
+	* Scale up the solution now to handle these numbers
+
+Solving for scale: see SS2 14 MAP REDUCE SCHEDULER
+
+As the programmer I just have to just write 2 functions for the batch: 
+
+see SS2 15 WORDCOUNT as example
+
+function map(chunk):
+	for each word w in chunk:
+		output (w, 1) // to disk
+
+function reduce(key, list of values):
+	// how to handle the list of vlaues?
+	output key, sum(list of values)
+
+You can do Map Reduce chaining.
+- ex. M0 -> R0 => M1 -> R2 => M3 -> R3 and so on...
+
+He talks about merge k lists around 2 hours and 44 minutes
+
+Point is: space complexity and time complexity...
+
+Google has moved from term partitioning to document partitioning.
+- He goes over why it's nice to do this around 3 hours into lecture.
+- Instead of partitioning by term, you partition the term intself for parallelization
+
+GRAPH PROCESSING
+
+Functional Requirements
+
+1. isFirstDegree(n1, n2) -> they are friends on FB
+2. isSecondDegree(n1, n2) -> they are friends to the same person
+3. isThirdDegree(n1, n2) -> friend of a friends friend.
+Provided: getConections(id) -> pointer to list of connections
+
+BFS would be better than DFS -> there are a lot of people.
+1. Just check if n2 is in getConnections(n1). O(log(n)) if we use binary search
+2. We can get the intersection of getConnections(n1) and getConnections(n2). O(n) double pointer
+3. ??? O(n^2) ???
+
+Non-funtioanl requirements
+* 600 million users
+* 100s ms response time (Latency)
+* 40K QPS (throughput)
+
+Scalability:
+- Storage (and cache)
+- Throughput (CPU/IO + network)
+- API Latency (Response time)
+- Hotspots
+- GeoLocation (regional availability)
+- Availability (Redundeancy)
+
+Throughput Calculation for API 1, 2 and 3
+- expect: API1 10K/s, API2 5K/s, API3 17K/s
+- Y = 10K/s + 5K/s + 2K/s = 17K/s (total API calls per second)
+- expect processing time: API1 10ms, API2 20ms, API3 30ms
+- X = (10000 API 1 calls per second/17000 total calls per second) * 10ms API 2 processing time + 
+	(5000 API 2 calls per second/17000 total calls per second) * 20ms API 2 processing time +
+	(2000 API 3 calls per second/17000 total calls per second) * 30ms API 3 processing time
+- X = 15.29ms (latency of API on a single thread)
+- 300*8/15.29ms = 157 API calls per second on 8 core
+- T = 300*523 = 156900 API calls per second
+- number of servers = Y/T = 17000/157 = 108 servers
+
+number of servers = Y / T
+T = 0.3*1000*Z/X
+
+Y = total api calls per second the system needs to handle
+T = api calls per second a single server can handle
+0.3 = we only want to use 30-40% of machines total compute
+1000 = milliseconds per second
+Z = number of threads on a single server
+X = processing time for a single API call on a single core
+
+
+Storage
+
+B = size of K-V pair.
+A = total number of K-V pairs
+C = K-V added per second
+
+BOUNDED
+A * B
+PLAN FOR FEW YEARS
+C * secs per year * B
+TTL
+C * TTL in secs * B
+
+Don't forget to replicate data on disk (3x rule of thumb? Also look out for average case value size #bitly-mistake)
+Typical commodity server = 8 cores, 1-2TB storage, 128 GB RAM
+

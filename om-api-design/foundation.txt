@@ -1,0 +1,428 @@
+UML VIDEO
+
+Person
+------
+name
+age
+------
+greet()
+
+Meaning:
+
+Class Person {
+	String name;
+	int age;
+
+	void greet() {
+	 //..
+	}
+}
+
+Shape | position --> Circle<Shape> | radius
+IS-A
+"A Circle is a Shape"
+
+Meaning:
+
+class Shape {
+	Point position;
+}
+class Circle extends Shape {
+	double radius;
+}
+
+Abstract classes are classes that you want to inherit from but not instantiate by itself. For example Shape.
+
+Multiplicity (one to many, many to one, many to many)
+
+Question
+   1|
+    |
+   *|
+Answer
+
+"Question may have 1 or many answers"
+
+Marriage
+ 0-1|
+ 	|
+   2|
+Person
+
+"Two people may belong to 1 or zero marriages"
+
+IS-PART-OF
+
+    Car
+ 	< > (white diamond)
+  	 |
+ 3..4|
+  Wheel
+
+ "A wheel is part of a car, but it has a lifecycle of its own"
+
+   House
+    <*> (back diamond)
+     |
+ 1..*|
+   Room
+
+ "Room is owned by a House and a room is destroyed with House"
+
+The last thing to know is that you can have multiple relationships. Take a class, teacher and room. Given one class and one teacher, there is one room. Given one teacher and one room, there is one class. Given one class and one room, there is one teacher.
+
+
+
+DESIGN PATTERS - ESSENTIALS
+
+Three Pattern Catagories
+1. Creational Patterns
+2. Structural Patterns
+3. Behavioral Patterns
+
+In the context of an interview don't worry too much about creational patterns.
+Focus will be on structural and behavioral patterns
+
+* Composite Pattern (2:30 in video)
+- Example: menu with nested menus
+
+* Decorator Pattern (8:15 in video)
+- Example: Drawing program that draws shapes in different colors, borders and patterns
+- Best used: when subclasses becomes too many and not dynamic enough
+
+* Facade Pattern
+- Example: Compile() calls lots of other complicated methods but the user only has to call the simple method
+
+* Visitor Pattern (25:00 in video)
+- Example: Word documents get opened by word, pictures opened by photoshop, spreadsheepts by open office
+- Create a File Visitor Class with methods like visit word() and visit picture(). You can subclass that with
+  operations like the print file visitor.
+
+* Flyweight Pattern (40:00 in video)
+- Example: Using it for saving space in memory. Typesetting a word - the problem is that you are creating a lot of instances of the same class
+- Extract the state into an external state class - perhaps compute certain states
+
+* Proxy Pattern (46:00 in video)
+- Example: Greeter class that greets people - we need a layer of control
+- Allows for control over expensive processes - so they don't get overly used.
+
+* Commnad Pattern (55:00 in video)
+- Example: Document that contains text - append and delete text command with execute() method
+- blah
+
+* Observer Pattern (1:07:00 in video)
+- Example: Mobile phone with geolocation, when location changes, certain applications wants to know about it
+
+* Strategy Pattern (1:16:30)
+- Example: We want to compress a file. File class has a compress() method. Strategy class has a compress() method. Subclass strategy with zip and tar and overide the compress method.
+
+* State Pattern (1:24:00)
+- Example: Mobile phone class with incomeing call() method. Create a Volume state class with ring method. Subclass the VolumeState with Silent State, Vibrate state, and sound state. That way ring will do the appropriate thing.
+- Bassically you can turn the volume up and down and have silent...
+
+* Factory / Singleton Method (1:35:00)
+- 
+
+
+
+LET'S SOLVE A PROBLEM VIDEO
+
+Problem: design a library to work with mathematical expressions
+
+
+
+RESTFUL API DESIGN VIDEO
+
+How to whiteboard restful api's
+
+HTTP calls:
+- URL
+- HTTP Verb (GET, POST, DELETE, PUT, ...)
+- Payload (JSON)
+- Request/Reply
+
+example:
+
+https://someservice.org/some/path
+=> shorten to just: /some/path
+
+CRUD Create (POST), Read (GET), Update (PUT), Delete (DELETE)
+
+Reply Status Codes:
+200 OK
+201 Created
+204 No Content
+304 Not Modified
+400 Bad Request
+401 Not Authorized
+404 Not Found
+500 Internal Server Error
+
+User Service
+------------
+
+DATA:
+{ 
+	userId: 17,
+	userName: "hanna",
+	userStatus: "gold"
+}
+
+>>> Create a user
+POST /users
+request: A user (without userId)
+response: A user (with userId)
+=> Reply
+	- Just status code
+	- Status code + payload
+
+
+>>> Get all users
+GET /users
+request:
+response: array of users
+
+>>> Get all users that match filter
+GET /users?userStatus=gold
+request:
+response: array of users that match
+
+>>> Get a user with a given ID
+get /users/{userId}
+request:
+response: A user object
+
+>>> Update a user
+PUT /users/{userId}
+request: user object without userId
+respnose: user object with userId
+
+>>> Delete a user
+DELETE /users/{userId}
+request:
+response: 204
+
+================================
+
+Friends:
+POST /users/{userId}/friends
+GET /users/{userId}/friends
+GET /users/{userId}/friends/{friendId}
+	/friends/{friends}
+PUT /users/{userId}/friend/{friendId}
+	/friend/{friendId}
+DELETE 	/users/{userId}/friend/{friendId}
+		/friend/{friendId}
+
+
+=================================
+
+JSON:
+
+Numbers: 123
+Booleans: true/false
+Null: null
+Strings: "abc"
+Objects: {
+			attribute1: 123,
+			attribute2: true,
+			attruibute3: {A: 1, B: 2}
+		}
+
+==================================
+
+Be ready for strong opinions on correct ways to do API's
+- Don't take sides in the interview
+
+
+
+SOLID DESIGN PRINCIPLES INTERVIEW ESSENTIALS
+
+- Single Responsability Principle
+- Open/closed principle
+- Liskov substitution principle
+- Interface segregation principle
+- Dependency inversion principle
+
+Single Responsability Principle
+* Every module should do exactly one thing
+	- Method/Function
+	- Class
+	- Package/Namespace/...
+
+Open/Closed Principle
+* Software Entities should be open for extension, but closed for modification.
+	- You write the software once
+	- You never change the software
+	- You extend the behavior with new software
+* "Design a document for inheritance or else prohibit it"
+* "Identify points of predicted variation and create stable interfaces around them."
+
+Liskov substitution principle
+* If S is a subclass of T, then objects of class T may be replaced with objects of class S.
+* Let P be a property of onjects of class T. Then objects of class S must also have this property.
+- Covariant return types
+	* Example: 
+
+	FruitProducer
+	-------------
+	produce(): Fruit
+
+	AppleProducer (is-a fuitproducer)
+	-------------
+	produce(): Apple
+
+	* The produce method must return something of type Apple. The return type is of the same variation.
+
+- Contravariant Argument Types
+	* Example
+
+	AppleEater
+	----------
+	eat(Apple)
+
+	FruitEater (is-a AppleEater)
+	----------
+	eat(Fruit)
+
+	* The inheritance is the other way around (A fruit eater must also be able to eat an apple). The inheritance is the other way around. Thats why it's called a contravariant.
+
+- No New Exceptions
+	* Example
+
+	ImageProducer
+	-------------
+	produce(): Image
+
+	ImageRenderer3D (is-a ImageProducer)
+	---------------
+	produce(): Image
+
+	WebImageLoader (is-a ImageProducer)
+	--------------
+	produce(): Image
+
+	* This violateds the rule. The network might sometimes fail - creating a different type of exception than those you would get from an image renderer powered by the graphics card.
+
+- Preconditions cannot be strengthened
+	* Example
+
+	Order
+	-----
+	ShoppingCard: Item[]
+	====================
+	submit()
+
+	BulkOrder (is-a Order)
+	---------
+	submit()
+
+	* You cannot have a precondition that becomes more stringent in the subclasses. For example, order has a submit that may have a minimum of 1 item in the shopping cart before you can checkout. Bulkorder, a subclass of order, then strengthens this precondition by saying you can only checkout when 10 items are in the shopping cart. That breaks this rule.
+
+- Post conditions cannot be weakened
+	* Example:
+
+	Doctor
+	------
+	treat(Patient)
+
+	WitchDoctor (is-a Doctor)
+	-----------
+	treat(Patient)
+
+	* You cannot substitute a doctor with a witch doctor  because the post condition that a patient will be healthy may not be true, thus breaking this rule.
+
+- Invariants must be preserved
+	* Example:
+
+	List
+	----
+
+	SortedList (is-a list)
+	-----------
+
+	Seems correct, but a list invariably iterates over the items in the order that you added them. The sorted list would break the invariant because it would sort the items as you insert them.
+
+Interface Segregation Principle (ISP)
+* A client should not be forced to use an interface with methods it doesn't need.
+- Example: a printer at Xerox could print, fax, and staple. When users just needed to print, the interface required them to put in a fax number and staple their print.
+
+	* Example (not ideal):
+
+	BookDao (is-part-of BookImport/BookExport)
+	-------
+	create(Book): id
+	read(id): Book
+	update(Id, Book)
+	delete(id)
+
+	BookImport
+
+	BookExport
+
+	- This is not ideal because bookimport would have access to update and delete (not needed) and bookexport would have access to create and read (also not needed). Breaks the interface segregation principle (ISP).
+
+	* Example (Ideal):
+
+	BookWriter (is-part-of BookImport)
+	----------
+	create(Book): id
+
+	BookReader (is-part-of BookExport)
+	----------
+	read(id): Book
+
+	NOTE: one thing that is hip right now CQRS (command query responsability segregation). The idea is to have a segragation between paths that query and paths that execute commands.
+
+Dependency Inversion Principle (DIP)
+* High-level modules should not depend on low-level modules.
+* Both abstract and concrete modules should only depend on abstract modules.
+
+	* Example (not ideal)
+
+	HTMLOrderUI (needs OrderProcessorImpl)
+	-----------
+	enterOrder()
+
+	OrderProcessorImpl (needs OrderSqlDb)
+	------------------
+	processOrder()
+
+	OrderSqlDb
+	----------
+	storeOrder()
+
+	This chain violates DIP because of the chain of dependencies - higher level depends on lower level. This is how we are currently implementing everything at orem...
+
+	* Example (ideal)
+
+	<<interface>>
+	OrderUI
+	-------
+	enterOrder()
+
+	HtmlOrderUI (is-a OrderUI interface implementation - needs order processor interface)
+	-----------
+	enterOrder()
+
+	<<interface>>
+	OrderProcessor
+	--------------
+	processOrder()
+
+	OrderProcessorImpl (is-a OrderProcessor interface implementation - needs OrderDb interface)
+	------------------
+	processOrder()
+
+	<<interface>>
+	OrderDb
+	-------
+	storeOrder()
+
+	OrderSqlDb (is-a OrderrDb interface implementation)
+	----------
+	storeOrder()
+
+	There are some other things to look out for. You need to organize these packages/programs in folders in a certain way. See video (36:00)
+
+	

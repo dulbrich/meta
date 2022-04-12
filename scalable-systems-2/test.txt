@@ -1,0 +1,8 @@
+jakespracher@gmail.com
+- worked at apple
+
+https://www.slideshare.net/elasticsearch/geospatial-advancements-in-elasticsearch
+
+https://www.slideshare.net/elasticsearch/geospatial-advancements-in-elasticsearch
+
+https://gis.stackexchange.com/questions/18330/using-geohash-for-proximity-searches
