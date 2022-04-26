@@ -1,0 +1,19 @@
+OBJECT MODELING AND API DESIGN, NIKHIL KOLEKAR
+
+Everyone will benefit from knowing the material from this section. It is needed for the interview process even if it doesn't apply directly to the role you are applying for.
+
+Is-a means the class extends the functionality of a parent class.
+
+If Foo is a subclass of class A, then Foo is tighly cupled to A.
+
+If Foo has an instance of class B then it is still cupled, but less so than inheritance.
+
+What is a class?
+
+Class
+------
+
+1) Template describing both state and behavior for all objects created from itself.
+2) Factory for object creation
+
+Polymorphism: Subclasses inherit behavior. Subclasses can override that behavior and overload it.
